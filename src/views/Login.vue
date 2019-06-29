@@ -43,8 +43,8 @@ export default {
         resource: '',
         desc: '',
 
-        username: 'admin',
-        password: '123456'
+        username: '',
+        password: ''
       },
 
       rules: {
