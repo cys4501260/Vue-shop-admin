@@ -126,7 +126,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 
 export default {
   data() {
@@ -199,8 +198,8 @@ export default {
   methods: {
     // 用户列表数据的获取
     getUserList() {
-      axios({
-      url: 'http://localhost:8888/api/private/v1/users',
+      this.$http ({
+      url: 'users',
       method: 'get',
       params: {
         // 可填,用来查询符合的参数值
@@ -208,10 +207,8 @@ export default {
         pagenum: this.currentpage,
         pagesize: this.pagesize,
       },
-      // 必须要将头部的token发送过去,必须保证登录才能接收到数据
-      headers: {
-        "Authorization": localStorage.getItem('token')
-      }
+      // headers(通过axios拦截器解决)
+      
       }).then(res  => {
         console.log(res)
         this.users = res.data.data.users
@@ -230,12 +227,11 @@ export default {
 
     // 切换用户状态
     changeUserStatus(row) {
-      axios({
-        url: `http://localhost:8888/api/private/v1/users/${row.id}/state/${row.mg_state}`,
+      this.$http ({
+        url: `users/${row.id}/state/${row.mg_state}`,
         method: 'put',
-        headers: {
-          "Authorization": localStorage.getItem('token')
-        }
+        // headers(通过axios拦截器解决)
+
       }).then(res  => {
         if(res.data.meta.status === 200) {
           this.$message({
@@ -270,12 +266,11 @@ export default {
           type: 'warning'
         })
 
-        axios({
-          url: `http://localhost:8888/api/private/v1/users/${id}`,
+        this.$http ({
+          url: `users/${id}`,
           method: 'delete',
-          headers: {
-            "Authorization": localStorage.getItem('token')
-          }
+          // headers(通过axios拦截器解决)
+          
         }).then(res  => {
           if(res.data.meta.status === 200) {
             this.$message({
@@ -311,14 +306,13 @@ export default {
       try {
         await this.$refs.addUserData.validate()
         console.log('表单校验成功')
-        axios({
-          url: `http://localhost:8888/api/private/v1/users`,
+        this.$http ({
+          url: `users`,
           method: 'post',
           // 表单绑定的数据
           data: this.addUserForm,
-          headers: {
-            "Authorization": localStorage.getItem('token')
-          }
+          // headers(通过axios拦截器解决)
+          
         }).then(res  => {
           if(res.data.meta.status === 201) {
             this.$message({
@@ -345,11 +339,10 @@ export default {
 
     // 显示修改模态框
     modifyUser(id) {
-      axios({
-        url: `http://localhost:8888/api/private/v1/users/${id}`,
-        headers: {
-          "Authorization": localStorage.getItem('token')
-        }
+      this.$http ({
+        url: `users/${id}`,
+        // headers(通过axios拦截器解决)
+        
       }).then(res  => {
         this.modifyUserForm = res.data.data
       })
@@ -360,17 +353,16 @@ export default {
       try {
         await this.$refs.modifyUserData.validate()
         console.log('表单校验成功')
-        axios({
-          url: `http://localhost:8888/api/private/v1/users/${this.modifyUserForm.id}`,
+        this.$http ({
+          url: `users/${this.modifyUserForm.id}`,
           method: 'put',
           // 表单绑定的数据
           data: {
             email: this.modifyUserForm.email,
             mobile: this.modifyUserForm.mobile
           },
-          headers: {
-            "Authorization": localStorage.getItem('token')
-          }
+          // headers(通过axios拦截器解决)
+          
         }).then(res  => {
           if(res.data.meta.status === 200) {
             this.$message({
