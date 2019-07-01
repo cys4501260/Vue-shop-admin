@@ -9,7 +9,7 @@
           品优购后台管理系统
         </el-col>
         <el-col :span="6" class="right">
-          欢迎39期星耀会员 <a href="#">退出</a>
+          欢迎39期星耀会员 <a href="javascript:;" @click="loginOut">退出</a>
           </el-col>
       </el-row>
     </el-header>
@@ -92,7 +92,15 @@
 
 <script>
 export default {
-  
+  methods: {
+    loginOut() {
+      // 清除token
+      localStorage.removeItem('token')
+      // 跳转回登录页
+      this.$router.push('/login')
+    }
+  }
+
 }
 </script>
 
