@@ -40,9 +40,9 @@
             <i class="el-icon-location"></i>
             <span>权限管理</span>
           </template>
-          <el-menu-item index="1-1">
+          <el-menu-item index="/rolelist">
             <i class="el-icon-menu"></i>
-            <span>校色列表</span>
+            <span>角色列表</span>
           </el-menu-item>
           <el-menu-item index="1-1">
             <i class="el-icon-menu"></i>
