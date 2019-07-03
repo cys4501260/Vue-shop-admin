@@ -61,7 +61,7 @@
         <template v-slot="{row}">
           <el-button type="primary" icon="el-icon-edit" size="mini" plain @click="modifyUser(row.id)"></el-button>
           <el-button type="danger" icon="el-icon-delete" size="mini" plain @click="delUser(row.id)"></el-button>
-          <el-button type="success" icon="el-icon-check" size="mini" plain>分配角色</el-button>
+          <el-button type="success" icon="el-icon-check" size="mini" plain @click="showAssign(row)">分配角色</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -119,6 +119,27 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="isShowModifyUser = false">取 消</el-button>
         <el-button type="primary" @click="modifyUserData">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 分配角色的模态框 -->
+    <el-dialog title="分配角色" :visible.sync="isAssignRole">
+      <el-form :model="assignData">
+        <el-form-item label="用户名" :label-width="formLabelWidth" 
+        prop="username">
+          <el-tag type="info">{{assignData.username}}</el-tag>
+        </el-form-item>
+        <el-form-item label="角色" :label-width="formLabelWidth">
+          <!-- select框双向绑定用户的角色id(rid) -->
+          <el-select class="select" v-model="assignData.rid" placeholder="请选择角色">
+            <el-option v-for="item in roleList" :key="item.id" :label="item.roleName" :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="isShowModifyUser = false">取 消</el-button>
+        <el-button type="primary" @click="modifyRoleAssign">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -186,6 +207,17 @@ export default {
         ]
 
       },
+
+      // 分配角色模态框显示隐藏
+      isAssignRole: false,
+      // 分配数据
+      assignData: {
+        username: '',
+        rid: ''
+      },
+
+      // 下拉菜单渲染的数据列表
+      roleList: []
 
     }
   },
@@ -384,7 +416,60 @@ export default {
       } catch (err) {
         console.log('表单校验失败' + err)
       }
+    },
+
+    // 分配角色模态框显示
+    showAssign(row) {
+      this.isAssignRole = true
+
+      // 拿数据库的数据会更准确
+      axios({
+        url: `http://localhost:8888/api/private/v1/users/${row.id}`,
+        headers: {
+          "Authorization": localStorage.getItem('token')
+        }
+      }).then(res  => {
+        // 用户数据
+        this.assignData = res.data.data
+      })
+
+      // 获取角色列表
+      axios({
+        url: `http://localhost:8888/api/private/v1/roles`,
+        headers: {
+          "Authorization": localStorage.getItem('token')
+        }
+      }).then(res  => {
+        console.log(res)
+        this.roleList = res.data.data
+      })
+
+    },
+
+    // 分配角色
+    modifyRoleAssign() {
+        axios({
+        url: `http://localhost:8888/api/private/v1/users/${this.assignData.id}/role`,
+        method: 'put',
+        data: {
+          rid: this.assignData.rid
+        },
+        headers: {
+          "Authorization": localStorage.getItem('token')
+        }
+      }).then(res  => {
+        this.$message({
+          type: "success",
+          message: res.data.meta.msg,
+          duration: 1000
+        });
+      })
+
+      this.isAssignRole = false
+      
     }
+    
+
 
   }
 }
