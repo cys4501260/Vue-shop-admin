@@ -9,6 +9,7 @@
 
     <!-- 主体列表 -->
     <el-table
+      ref="roleTable"
       :data="roleList"
       stripe
       style="width: 100%">
@@ -18,19 +19,19 @@
           <!-- 一级菜单 -->
           <el-row type="flex" class="level1" justify="space-between" v-for="level1 in row.children" :key="level1.id">
             <el-col :span="6">
-              <el-tag closable @close="deleteRolePermission">{{level1.authName}}</el-tag>
+              <el-tag closable @close="deleteRolePermission(row, level1.id)">{{level1.authName}}</el-tag>
               <i class="el-icon-arrow-right"></i>
             </el-col>
             <el-col>
               <!-- 二级菜单 -->
               <el-row type="flex" class="level2" v-for="level2 in level1.children" :key="level2.id">
                 <el-col :span="6">
-                  <el-tag type="success" closable @close="deleteRolePermission">{{level2.authName}}</el-tag>
+                  <el-tag type="success" closable @close="deleteRolePermission(row, level2.id)">{{level2.authName}}</el-tag>
                   <i class="el-icon-arrow-right"></i>
                 </el-col>
                 <!-- 三级菜单 -->
                 <el-col>
-                  <el-tag type="warning" class="level3" closable v-for="level3 in level2.children" :key="level3.id" @close="deleteRolePermission">{{level3.authName}}</el-tag>
+                  <el-tag type="warning" class="level3" closable v-for="level3 in level2.children" :key="level3.id" @close="deleteRolePermission(row, level3.id)">{{level3.authName}}</el-tag>
                 </el-col>
               </el-row>
             </el-col>
@@ -108,11 +109,14 @@ export default {
   // 事件
   methods: {
     // 获取列表数据
-    getRoleListData() {
+    getRoleListData(callback) {
       this.$http({
         url: 'roles',
       }).then(res  => {
         this.roleList = res.data.data
+
+        // 传入的回调,当页面加载完毕后才会触发,展开上次对应的权限分级栏
+        callback && callback()
       }).catch (res  => {
         console.log('失败了')
       })
@@ -134,14 +138,10 @@ export default {
 
       // 默认选中数组(通过点击,传入外面对应的行数据,拿到默认的权限)
       console.log(row)
-      let level1Ids = []
-      let level2Ids = []
       let level3Ids = []
 
       row.children.forEach(level1  => {
-        level1Ids.push(level1.id)
         level1.children.forEach(level2  => {
-          level2Ids.push(level2.id)
           level2.children.forEach(level3  => {
             level3Ids.push(level3.id)
           })
@@ -190,8 +190,30 @@ export default {
     },
 
     // 点击删除权限
-    deleteRolePermission() {
-      // 将点击的tag标签对应的角色权限id拿到
+    async deleteRolePermission(row, id) {
+      // 将点击的tag标签对应的角色权限id, 对应的分级id拿到
+      let res = await this.$http({
+        url: `roles/${row.id}/rights/${id}`,
+        method: 'delete',
+      })
+
+      if(res.data.meta.status === 200) {
+        this.$message({
+          type: "success",
+          message: res.data.meta.msg,
+          duration: 1000
+        });
+
+        // 使用nextTick函数让数据修改完成的时候,调用渲染页面,传入回调函数
+        this.getRoleListData(() => {
+          this.$nextTick(()  => {
+            // row是对应行的数据,在整个列表中找到对应的行(使用展开对应行的方法)
+            this.$refs.roleTable.toggleRowExpansion(this.roleList.find(v  => v.id === row.id), true)
+          })
+        })
+        
+      }
+      
     }
     
   },
