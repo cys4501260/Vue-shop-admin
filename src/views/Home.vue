@@ -1,5 +1,6 @@
 <template>
   <el-container>
+    <!-- 头部 -->
     <el-header>
       <el-row type="flex" class="row-bg" justify="space-between" align="middle">
         <el-col :span="6" class="left">
@@ -13,7 +14,10 @@
           </el-col>
       </el-row>
     </el-header>
+
+  <!-- 主体部分 -->
   <el-container>
+    <!-- 左侧列表展示 -->
     <el-aside width="200px">
       <el-menu
         :default-active="$router.path"
@@ -24,67 +28,20 @@
         :unique-opened="true"
         :router="true"
         >
-        <el-submenu index="1">
+        <el-submenu v-for="menu1 in leftListData" :key="menu1.id" :index="menu1.id + ''" >
           <template slot="title">
             <i class="el-icon-location"></i>
-            <span>用户管理</span>
+            <span>{{menu1.authName}}</span>
           </template>
-          <el-menu-item index="/user">
+          <el-menu-item v-for="menu2 in menu1.children" :key="menu2.id" :index="'/' + menu2.path">
             <i class="el-icon-menu"></i>
-            <span>用户管理</span>
-          </el-menu-item>
-        </el-submenu>
-
-        <el-submenu index="2">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>权限管理</span>
-          </template>
-          <el-menu-item index="/rolelist">
-            <i class="el-icon-menu"></i>
-            <span>角色列表</span>
-          </el-menu-item>
-          <el-menu-item index="/permission">
-            <i class="el-icon-menu"></i>
-            <span>权限列表</span>
-          </el-menu-item>
-        </el-submenu>
-
-        <el-submenu index="3">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>商品管理</span>
-          </template>
-          <el-menu-item index="1-1">
-            <i class="el-icon-menu"></i>
-            <span>用户管理</span>
-          </el-menu-item>
-        </el-submenu>
-
-        <el-submenu index="4">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>订单管理</span>
-          </template>
-          <el-menu-item index="1-1">
-            <i class="el-icon-menu"></i>
-            <span>用户管理</span>
-          </el-menu-item>
-        </el-submenu>
-        
-        <el-submenu index="5">
-          <template slot="title">
-            <i class="el-icon-location"></i>
-            <span>数据统计</span>
-          </template>
-          <el-menu-item index="1-1">
-            <i class="el-icon-menu"></i>
-            <span>用户管理</span>
+            <span>{{menu2.authName}}</span>
           </el-menu-item>
         </el-submenu>
       </el-menu>
-
     </el-aside>
+
+    <!-- 右侧主体内容展示 -->
     <el-main>
       <router-view></router-view>
     </el-main>
@@ -95,6 +52,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      leftListData: []
+    }
+  },
   methods: {
     loginOut() {
       // 清除token
@@ -102,6 +64,17 @@ export default {
       // 跳转回登录页
       this.$router.push('/login')
     }
+  },
+
+  async created() {
+    // 根据登录的用户展示对应左侧管理列表
+    let res = await this.$http({
+      url: `menus`
+    })
+
+    console.log(res)
+    this.leftListData = res.data.data
+    
   }
 
 }
