@@ -18,19 +18,19 @@
           <!-- 一级菜单 -->
           <el-row type="flex" class="level1" justify="space-between" v-for="level1 in row.children" :key="level1.id">
             <el-col :span="6">
-              <el-tag closable>{{level1.authName}}</el-tag>
+              <el-tag closable @close="deleteRolePermission">{{level1.authName}}</el-tag>
               <i class="el-icon-arrow-right"></i>
             </el-col>
             <el-col>
               <!-- 二级菜单 -->
               <el-row type="flex" class="level2" v-for="level2 in level1.children" :key="level2.id">
                 <el-col :span="6">
-                  <el-tag type="success" closable>{{level2.authName}}</el-tag>
+                  <el-tag type="success" closable @close="deleteRolePermission">{{level2.authName}}</el-tag>
                   <i class="el-icon-arrow-right"></i>
                 </el-col>
                 <!-- 三级菜单 -->
                 <el-col>
-                  <el-tag type="warning" class="level3" closable v-for="level3 in level2.children" :key="level3.id">{{level3.authName}}</el-tag>
+                  <el-tag type="warning" class="level3" closable v-for="level3 in level2.children" :key="level3.id" @close="deleteRolePermission">{{level3.authName}}</el-tag>
                 </el-col>
               </el-row>
             </el-col>
@@ -71,7 +71,6 @@
         show-checkbox
         node-key="id"
         :default-expand-all="true"
-        :default-checked-keys="defaultSelect"
         :props="defaultProps">
       </el-tree>
       <div slot="footer" class="dialog-footer">
@@ -92,7 +91,7 @@ export default {
       isShowRolePermission: false,
 
       // 默认选中的权限数组
-      defaultSelect: [],
+      // defaultSelect: [],
       // 权限列表数据
       permissionList: [],
       defaultProps: {
@@ -135,8 +134,6 @@ export default {
 
       // 默认选中数组(通过点击,传入外面对应的行数据,拿到默认的权限)
       console.log(row)
-      let level1Ids = []
-      let level2Ids = []
       let level3Ids = []
 
       row.children.forEach(level1  => {
@@ -149,15 +146,24 @@ export default {
         })
       })
 
-      this.defaultSelect = [...level1Ids, ...level2Ids, ...level3Ids]
+      let checkRole = [...level3Ids]
+
+      this.$nextTick(()  => {
+        this.$refs.rolePermissionTree.setCheckedKeys(checkRole)
+      })
+      
+      // this.defaultSelect = [...level1Ids, ...level2Ids, ...level3Ids]
 
     },
 
     // 更新角色的权限
     updateRolePermission() {
       // 通过树形控件自带的事件,拿到现在的选中权限存储到数据中
-      let rid =  [...this.$refs.rolePermissionTree.getCheckedKeys(), ...this.$refs.rolePermissionTree.getHalfCheckedKeys()].join(',')
+      let array =  [...this.$refs.rolePermissionTree.getCheckedNodes(), ...this.$refs.rolePermissionTree.getHalfCheckedNodes()]
 
+      let rid = array.map(item  => item.id).join(',')
+      console.log(rid)
+      
       // 发送请求
       this.$http({
         url: `roles/${this.roleClickId}/rights`,
@@ -179,6 +185,11 @@ export default {
         this.isShowRolePermission = false
         
       })
+    },
+
+    // 点击删除权限
+    deleteRolePermission() {
+      // 将点击的tag标签对应的角色权限id拿到
     }
     
   },

@@ -49,6 +49,7 @@
             <span>权限列表</span>
           </el-menu-item>
         </el-submenu>
+
         <el-submenu index="3">
           <template slot="title">
             <i class="el-icon-location"></i>
@@ -59,6 +60,7 @@
             <span>用户管理</span>
           </el-menu-item>
         </el-submenu>
+
         <el-submenu index="4">
           <template slot="title">
             <i class="el-icon-location"></i>
@@ -69,6 +71,7 @@
             <span>用户管理</span>
           </el-menu-item>
         </el-submenu>
+        
         <el-submenu index="5">
           <template slot="title">
             <i class="el-icon-location"></i>
