@@ -134,6 +134,8 @@ export default {
 
       // 默认选中数组(通过点击,传入外面对应的行数据,拿到默认的权限)
       console.log(row)
+      let level1Ids = []
+      let level2Ids = []
       let level3Ids = []
 
       row.children.forEach(level1  => {
