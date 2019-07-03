@@ -72,7 +72,6 @@ export default {
       url: `menus`
     })
 
-    console.log(res)
     this.leftListData = res.data.data
     
   }

@@ -5,6 +5,7 @@ import Home from './views/Home.vue'
 import UserList from './views/UserList.vue'
 import RoleList from './views/RoleList.vue'
 import PermissionList from './views/PermissionList.vue'
+import GoodsList from './views/GoodsList.vue'
 
 Vue.use(Router)
 
@@ -33,7 +34,11 @@ export default new Router({
         {
           path: '/rights',
           component: PermissionList
-        }
+        },
+        {
+          path: '/goods',
+          component: GoodsList
+        },
       ]
     },
     
