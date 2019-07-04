@@ -7,6 +7,7 @@ import RoleList from './views/RoleList.vue'
 import PermissionList from './views/PermissionList.vue'
 import GoodsList from './views/GoodsList.vue'
 import GoodsClassify from './views/GoodsClassify.vue'
+import AddGoods from './views/AddGoods.vue'
 
 Vue.use(Router)
 
@@ -43,6 +44,10 @@ export default new Router({
         {
           path: '/categories',
           component: GoodsClassify
+        },
+        {
+          path: '/goods-add',
+          component: AddGoods
         },
       ]
     },

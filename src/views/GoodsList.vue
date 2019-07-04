@@ -8,7 +8,7 @@
     </el-breadcrumb>
 
     <!-- 添加按钮 -->
-    <el-button type="success" class="addGoods" plain>添加商品</el-button>
+    <el-button type="success" class="addGoods" plain @click="() => {this.$router.push('/goods-add')}">添加商品</el-button>
 
     <!-- 主题表格部分 -->
     <el-table
