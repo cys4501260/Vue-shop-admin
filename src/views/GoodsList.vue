@@ -7,6 +7,9 @@
       <el-breadcrumb-item>商品列表</el-breadcrumb-item>
     </el-breadcrumb>
 
+    <!-- 添加按钮 -->
+    <el-button type="success" class="addGoods" plain>添加商品</el-button>
+
     <!-- 主题表格部分 -->
     <el-table
       :data="goodsListData"
@@ -33,8 +36,23 @@
       </el-table-column>
       <el-table-column
         label="操作">
+        <template v-slot="{row}">
+          <el-button type="primary" icon="el-icon-edit" size="mini" plain></el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" plain></el-button>
+        </template>
       </el-table-column>
     </el-table>
+
+    <!-- 分页 -->
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :page-size="pagesize"
+      :current-page="pagenum"
+      @current-change="pageChange"
+      :total="total">
+    </el-pagination>
+    
   </div>
 </template>
 
@@ -44,21 +62,34 @@ export default {
     return {
       goodsListData: [],
       pagenum: 1,
-      pagesize: 6
+      pagesize: 6,
+      total: 0
     }
   },
-  async created() {
-    let res = await this.$http({
-      url: `goods`,
-      params: {
-        pagenum: this.pagenum,
-        pagesize: this.pagesize
-      }
-    })
 
-    console.log(res)
-    this.goodsListData = res.data.data.goods
+  methods: {
+    async getGoodsListData() {
+      let res = await this.$http({
+        url: `goods`,
+        params: {
+          pagenum: this.pagenum,
+          pagesize: this.pagesize
+        }
+      })
+
+      console.log(res)
+      this.goodsListData = res.data.data.goods
+      this.total = res.data.data.total
+    },
+    
+    pageChange(currentPage) {
+      this.pagenum = currentPage
+      this.getGoodsListData()
+    }
+  },
   
+  created() {
+    this.getGoodsListData()
   }
 }
 </script>
@@ -71,5 +102,9 @@ export default {
     font-size: 16px;
     line-height: 50px;
     padding-left: 10px;
+  }
+
+  .addGoods {
+    margin-top: 10px;
   }
 </style>
