@@ -6,6 +6,7 @@ import UserList from './views/UserList.vue'
 import RoleList from './views/RoleList.vue'
 import PermissionList from './views/PermissionList.vue'
 import GoodsList from './views/GoodsList.vue'
+import GoodsClassify from './views/GoodsClassify.vue'
 
 Vue.use(Router)
 
@@ -38,6 +39,10 @@ export default new Router({
         {
           path: '/goods',
           component: GoodsList
+        },
+        {
+          path: '/categories',
+          component: GoodsClassify
         },
       ]
     },

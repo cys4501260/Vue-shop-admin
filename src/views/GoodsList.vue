@@ -82,6 +82,7 @@ export default {
       this.total = res.data.data.total
     },
     
+    // 切换页数
     pageChange(currentPage) {
       this.pagenum = currentPage
       this.getGoodsListData()
