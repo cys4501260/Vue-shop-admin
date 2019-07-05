@@ -15,7 +15,7 @@
     </el-steps>
 
     <!-- 主体信息 -->
-    <el-tabs tab-position="left" style="margin-top: 20px" @tab-click="changeTab" :value="tabValue">
+    <el-tabs tab-position="left" style="margin-top: 20px" @tab-click="changeTab" v-model="tabValue">
       <el-tab-pane label="基本信息">
         <el-form ref="form" :model="addGoodsData" label-width="80px">
           <el-form-item label="商品名称">
@@ -108,7 +108,7 @@ export default {
         goods_price: 0,
         goods_number: 0,
         goods_weight: 0,
-        is_promote: 0,
+        is_promote: "0",
         goods_classify: [],
         pics: [],
         goods_introduce: ''
@@ -194,4 +194,10 @@ export default {
     margin-top: 10px;
   }
 
+</style>
+
+<style>
+  .ql-editor {
+    height: 200px;
+  }
 </style>
