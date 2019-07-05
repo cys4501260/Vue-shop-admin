@@ -21,7 +21,6 @@ router.beforeEach((to, from, next) => {
     next()
     return
   }
-
   // 判断网页去向
   if (localStorage.getItem('token')) {
     next()
@@ -46,6 +45,16 @@ axios.interceptors.request.use(function (config) {
 
   // return config 是必须要有的返回值
   return config;
+})
+
+// 设置axios的响应拦截器
+axios.interceptors.response.use(function (response) {
+  // console.log(response)
+  if (response.data.meta.status === 401) {
+    router.push('/login')
+  }
+
+  return response
 })
 
 new Vue({
